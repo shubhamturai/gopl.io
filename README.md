@@ -19,3 +19,8 @@ book; you can safely ignore them.  In a few cases, programs
 have been reformatted in an unnatural way so that they can be presented
 in stages in the book.
 
+go build -o ../../bin/book_executables/echo3 ch1/echo3/main.go
+	../../bin/book_executables/./echo3 this is my world
+this is an example for the program echo3 in ch1 execution. The executables are stored in bin folder. Note that the home folder is 
+	~/gobook/src/gopl.io
+	
