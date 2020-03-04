@@ -10,11 +10,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
 	s, sep := "", ""
-
+	start := time.Now()
 	//for _, arg := range os.Args[1:] {
 	for i, arg := range os.Args[:] {
 		//s += arg + sep
@@ -22,7 +23,9 @@ func main() {
 		sep = " "
 		fmt.Println(i, " ", arg)
 	}
+	elapsed := time.Since(start)
 	fmt.Println(s)
+	fmt.Println(elapsed)
 }
 
 //!-
