@@ -32,6 +32,7 @@ func main() {
 	}
 	for line, n := range counts {
 		if n > 1 {
+			fmt.Printf("count map is :%v", counts)
 			fmt.Printf("%d\t%s\n", n, line)
 		}
 	}
@@ -40,7 +41,11 @@ func main() {
 func countLines(f *os.File, counts map[string]int) {
 	input := bufio.NewScanner(f)
 	for input.Scan() {
+		if input.Text() == "" {
+			break
+		}
 		counts[input.Text()]++
+		fmt.Printf("count map is :%v", counts)
 	}
 	// NOTE: ignoring potential errors from input.Err()
 }

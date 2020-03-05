@@ -20,8 +20,11 @@ func main() {
 	fmt.Printf("counts initialization completed also input bufio will start\n")
 	input := bufio.NewScanner(os.Stdin)
 	fmt.Printf("input bufio is stared\n")
-	for input.Scan() || input.Text() != "" {
+	for input.Scan() {
 		fmt.Printf("input is scanned\n")
+		if input.Text() == "" {
+			break
+		}
 		counts[input.Text()]++
 		fmt.Println("it is counted with count :", counts)
 
@@ -30,6 +33,7 @@ func main() {
 	for line, n := range counts {
 		fmt.Printf("every count is printed\n")
 		if n > 1 {
+			fmt.Println("it is counted with count :", counts)
 			fmt.Printf("%d\t%s\n", n, line)
 		}
 	}
