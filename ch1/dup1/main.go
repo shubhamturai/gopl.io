@@ -15,13 +15,20 @@ import (
 )
 
 func main() {
+	fmt.Printf("main started\n")
 	counts := make(map[string]int)
+	fmt.Printf("counts initialization completed also input bufio will start\n")
 	input := bufio.NewScanner(os.Stdin)
-	for input.Scan() {
+	fmt.Printf("input bufio is stared\n")
+	for input.Scan() || input.Text() != "" {
+		fmt.Printf("input is scanned\n")
 		counts[input.Text()]++
+		fmt.Println("it is counted with count :", counts)
+
 	}
 	// NOTE: ignoring potential errors from input.Err()
 	for line, n := range counts {
+		fmt.Printf("every count is printed\n")
 		if n > 1 {
 			fmt.Printf("%d\t%s\n", n, line)
 		}
