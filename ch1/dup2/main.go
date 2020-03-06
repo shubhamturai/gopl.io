@@ -27,15 +27,28 @@ func main() {
 				continue
 			}
 			countLines(f, counts)
+			var repeat bool = false
+			for line, n := range counts {
+				if n > 1 {
+					//fmt.Printf("count map is :%v", counts)
+					fmt.Printf("%d\t%s\n", n, line)
+					if repeat == false {
+						repeat = true
+						fmt.Println("file is :", arg)
+					}
+				}
+			}
 			f.Close()
 		}
 	}
-	for line, n := range counts {
-		if n > 1 {
-			fmt.Printf("count map is :%v", counts)
-			fmt.Printf("%d\t%s\n", n, line)
-		}
-	}
+	/*
+		for line, n := range counts {
+			if n > 1 {
+				fmt.Printf("count map is :%v", counts)
+				fmt.Printf("%d\t%s\n", n, line)
+			}
+		}*/
+
 }
 
 func countLines(f *os.File, counts map[string]int) {
@@ -45,7 +58,7 @@ func countLines(f *os.File, counts map[string]int) {
 			break
 		}
 		counts[input.Text()]++
-		fmt.Printf("count map is :%v", counts)
+		//fmt.Printf("count map is :%v", counts)
 	}
 	// NOTE: ignoring potential errors from input.Err()
 }
