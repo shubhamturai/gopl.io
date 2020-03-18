@@ -10,6 +10,12 @@ package main
 import (
 	"fmt"
 	"math"
+	"image"
+	"image/color"
+	"image/gif"
+	"os"
+	"log"
+	"net/http"
 )
 
 const (
@@ -23,21 +29,58 @@ const (
 
 var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30°), cos(30°)
 
+var invalid bool = false
+
+var palette = []color.Color{color.White, color.RGBA{0x00, 0xff, 0x00, 0xff}, color.RGBA{0xff, 0x00, 0x00, 0xff}}
+
+const (
+	whiteIndex = 0 // first color in palette
+	//blackIndex = 1 // next color in palette
+	greenIndex = 1 // next color in palette
+	redIndex   = 2 //next color in palette
+)
+
 func main() {
 	fmt.Printf("<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke: grey; fill: white; stroke-width: 0.7' "+
 		"width='%d' height='%d'>", width, height)
-	for i := 0; i < cells; i++ {
-		for j := 0; j < cells; j++ {
-			ax, ay := corner(i+1, j)
-			bx, by := corner(i, j)
-			cx, cy := corner(i, j+1)
-			dx, dy := corner(i+1, j+1)
-			fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
-				ax, ay, bx, by, cx, cy, dx, dy)
+	
+	
+	if len(os.Args) > 1 && os.Args[1] == "web" {
+		//!+http
+		handler := func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "image/svg+xml")
+			anim := gif.GIF{LoopCount: 1}
+			for i := 0; i < cells; i++ {
+				for j := 0; j < cells; j++ {
+					ax, ay := corner(i+1, j)
+					bx, by := corner(i, j)
+					cx, cy := corner(i, j+1)
+					dx, dy := corner(i+1, j+1)
+					if invalid {
+						invalid = false
+						break
+					}
+
+					rect := image.Rect(0, 0, cells, cells)
+					img := image.NewPaletted(rect, palette)
+					img.SetColorIndex(int(ax), int(ay), greenIndex)
+					img.SetColorIndex(int(bx), int(by), greenIndex)
+					img.SetColorIndex(int(cx), int(cy), greenIndex)
+					img.SetColorIndex(int(dx), int(dy), greenIndex)
+					anim.Image = append(anim.Image, img)
+					fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
+						ax, ay, bx, by, cx, cy, dx, dy)
+				}
+			}
+			fmt.Println("</svg>")
+			gif.EncodeAll(w, &anim)
 		}
+		http.HandleFunc("/", handler)
+		//!-http
+		log.Fatal(http.ListenAndServe("localhost:8000", nil))
+		return
 	}
-	fmt.Println("</svg>")
 }
 
 func corner(i, j int) (float64, float64) {
@@ -45,6 +88,9 @@ func corner(i, j int) (float64, float64) {
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
 
+	if x == 0.0 && y == 0.0 {
+		invalid = true
+	}
 	// Compute surface height z.
 	z := f(x, y)
 
