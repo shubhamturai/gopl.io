@@ -8,6 +8,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -20,18 +21,44 @@ func main() {
 		xmin, ymin, xmax, ymax = -2, -2, +2, +2
 		width, height          = 1024, 1024
 	)
-
-	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
-		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
-			// Image point (px, py) represents complex value z.
-			img.Set(px, py, mandelbrot(z))
+	if len(os.Args[:1]) > 0{
+		for _, imgStr := range os.Args[1:]{
+			f, err := os.Create(imgStr)
+			if err != nil {
+				fmt.Println("could not create an empty image")
+			}
+			defer f.Close()
+			img := image.NewRGBA(image.Rect(0, 0, width, height))
+			var mandelColor color.Color
+			for py := 0; py < height; py += 2 { //originally it was py++
+				y := float64(py)/height*(ymax-ymin) + ymin
+				for px := 0; px < width; px += 2 { //originally it was px++
+					x := float64(px)/width*(xmax-xmin) + xmin
+					z := complex(x, y)
+					// Image point (px, py) represents complex value z.
+					//img.Set(px, py, mandelbrot(z))
+					//mandelColor = mandelbrot(z)
+					mandelColor = newton(z)
+					img.Set(px, py, mandelColor)
+					img.Set(px+1, py, mandelColor)
+					img.Set(px, py+1, mandelColor)
+					img.Set(px+1, py+1, mandelColor)
+				}
+			}
+			//png.Encode(os.Stdout, img) // NOTE: ignoring errors //gives output to the console
+			
+			// Encode to `PNG` with `DefaultCompression` level
+			// then save to file
+			err = png.Encode(f, img)
+			if err != nil {
+				fmt.Println("could not encode the created image to png format")
+			}
 		}
+		
+	} else{
+		fmt.Print("please give the names of the images as an argument while executing")
 	}
-	png.Encode(os.Stdout, img) // NOTE: ignoring errors
+	
 }
 
 func mandelbrot(z complex128) color.Color {
@@ -42,7 +69,8 @@ func mandelbrot(z complex128) color.Color {
 	for n := uint8(0); n < iterations; n++ {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
-			return color.Gray{255 - contrast*n}
+			//return color.Gray{255 - contrast*n}
+			return color.RGBA{255 - contrast*n, 0x00, 0x00, 0xff}
 		}
 	}
 	return color.Black
@@ -77,7 +105,8 @@ func newton(z complex128) color.Color {
 	for i := uint8(0); i < iterations; i++ {
 		z -= (z - 1/(z*z*z)) / 4
 		if cmplx.Abs(z*z*z*z-1) < 1e-6 {
-			return color.Gray{255 - contrast*i}
+			//return color.Gray{255 - contrast*i}
+			return color.RGBA{255 - contrast*i, 0x00, 0x00, 0xff}
 		}
 	}
 	return color.Black
