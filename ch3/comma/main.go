@@ -17,8 +17,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -27,6 +29,41 @@ func main() {
 	}
 }
 
+// comma inserts commas in a non-negative decimal integer string.
+func comma(s string) string {
+	//n := len(s)
+	var p int
+	var buf bytes.Buffer
+	n := len(s)
+	if strings.ContainsRune(s, '.') {
+		p = strings.IndexRune(s, '.')
+		for i := 0; i <= p; i++ {
+			fmt.Fprint(&buf,string(s[i]))
+			
+			if (p-i) % 3 == 1 && i != p-1 {
+				buf.WriteString(",")
+			}
+		}
+		for i := p+1; i < n; i++ {
+			fmt.Fprint(&buf,string(s[i]))
+			
+			if (i-p) % 3 == 0 && i-p != n-p-1 {
+				buf.WriteString(",")
+			}
+		}
+		
+	} else {
+		for i := 0; i < n; i++ {
+			fmt.Fprint(&buf,string(s[i]))
+			if (n-i) % 3 == 1 && i != n-1 {
+				buf.WriteString(",")
+			}
+		}
+	}
+	return buf.String()
+}
+
+/*
 //!+
 // comma inserts commas in a non-negative decimal integer string.
 func comma(s string) string {
@@ -38,3 +75,4 @@ func comma(s string) string {
 }
 
 //!-
+*/
