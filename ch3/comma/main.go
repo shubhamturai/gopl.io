@@ -37,17 +37,9 @@ func comma(s string) string {
 	n := len(s)
 	if strings.ContainsRune(s, '.') {
 		p = strings.IndexRune(s, '.')
-		for i := 0; i <= p; i++ {
+		for i := 0; i < n; i++ {
 			fmt.Fprint(&buf,string(s[i]))
-			
-			if (p-i) % 3 == 1 && i != p-1 {
-				buf.WriteString(",")
-			}
-		}
-		for i := p+1; i < n; i++ {
-			fmt.Fprint(&buf,string(s[i]))
-			
-			if (i-p) % 3 == 0 && i-p != n-p-1 {
+			if (p-i) % 3 == 1 && i != p-1 && i <= p || (i-p) % 3 == 0 && i-p != n-p-1 && i > p {
 				buf.WriteString(",")
 			}
 		}
