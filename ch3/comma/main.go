@@ -41,9 +41,8 @@ func comma(s string) string {
 			fmt.Fprint(&buf,string(s[i]))
 			if (p-i) % 3 == 1 && i != p-1 && i <= p || (i-p) % 3 == 0 && i-p != n-p-1 && i > p {
 				buf.WriteString(",")
-			}
+			}	
 		}
-		
 	} else {
 		for i := 0; i < n; i++ {
 			fmt.Fprint(&buf,string(s[i]))
