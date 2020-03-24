@@ -6,7 +6,10 @@
 // The sha256 command computes the SHA256 hash (an array) of a string.
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math/bits"
+)
 
 //!+
 import "crypto/sha256"
@@ -20,6 +23,12 @@ func main() {
 	// 4b68ab3847feda7d6c62c1fbcbeebfa35eab7351ed5e78f4ddadea5df64b8015
 	// false
 	// [32]uint8
+	var count int
+	for i := 0; i < len(c1); i++ {
+		count += bits.OnesCount8(c1[i] ^ c2[i])
+	}
+	fmt.Print(count)
+
 }
 
 //!-
