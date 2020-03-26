@@ -16,6 +16,14 @@ func addEdge(from, to string) {
 	if edges == nil {
 		edges = make(map[string]bool)
 		graph[from] = edges
+		//graph[from] = edgesLogin
+		//Quick Links
+		//Customer Support
+		//Contact Details
+		//Frequently Asked Questions
+		//Feedback
+		//Feedback Status
+		//Customer Support
 	}
 	edges[to] = true
 }
