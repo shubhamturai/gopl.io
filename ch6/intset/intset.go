@@ -9,6 +9,7 @@ package intset
 import (
 	"bytes"
 	"fmt"
+	"math/bits"
 )
 
 //!+intset
@@ -71,3 +72,28 @@ func (s *IntSet) String() string {
 }
 
 //!-string
+
+func (s *IntSet) Len() int {// return the number of elements
+	var bitCount int
+	for _, word := range s.words{
+		bitCount += bits.OnesCount64(word)
+	}
+	return bitCount
+}
+
+func (s *IntSet) Remove(x int){ // remove x from the set
+	word, bit := x/64, uint(x%64)
+	s.words[word] = s.words[word] &^ (1<<bit)
+}
+
+func (s *IntSet) Clear(){ // remove all elements from the set
+	//var k []uint64
+	s.words = nil
+}
+
+func (s *IntSet) Copy() *IntSet {// return a copy of the set
+	var i IntSet
+	i.words = make([]uint64, len(s.words))
+	copy(i.words, s.words)
+	return &i
+}

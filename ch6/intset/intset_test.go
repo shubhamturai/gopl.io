@@ -36,15 +36,32 @@ func Example_two() {
 	x.Add(144)
 	x.Add(9)
 	x.Add(42)
+	x.Add(37)
+	x.Add(128)
+	//x.Remove(37)
 
 	//!+note
 	fmt.Println(&x)         // "{1 9 42 144}"
 	fmt.Println(x.String()) // "{1 9 42 144}"
 	fmt.Println(x)          // "{[4398046511618 0 65536]}"
 	//!-note
+	fmt.Println(x.Len())
+	x.Remove(42)
+	fmt.Println(&x)
+	//fmt.Printf("%p\n", &x)
+	
+	//var y IntSet
+	y := x.Copy()
+	fmt.Println(y)
 
+	x.Clear()
+	fmt.Println(&x)
 	// Output:
-	// {1 9 42 144}
-	// {1 9 42 144}
-	// {[4398046511618 0 65536]}
+	// {1 9 37 42 128 144}
+	// {1 9 37 42 128 144}
+	// {[4535485465090 0 65537]}
+	// 6
+	// {1 9 37 128 144}
+	// {1 9 37 128 144}
+	// {}
 }
