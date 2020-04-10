@@ -73,6 +73,7 @@ func (s *IntSet) String() string {
 
 //!-string
 
+// Len returns the number of elements in the set
 func (s *IntSet) Len() int {// return the number of elements
 	var bitCount int
 	for _, word := range s.words{
@@ -81,19 +82,82 @@ func (s *IntSet) Len() int {// return the number of elements
 	return bitCount
 }
 
+// Remove removes the specified element from the set
 func (s *IntSet) Remove(x int){ // remove x from the set
 	word, bit := x/64, uint(x%64)
 	s.words[word] = s.words[word] &^ (1<<bit)
 }
 
+// Clear clears all the elements of the set
 func (s *IntSet) Clear(){ // remove all elements from the set
-	//var k []uint64
 	s.words = nil
 }
 
+// Copy makes a copy of the struct IntSet object 
+// and returns the address of new IntSet object
 func (s *IntSet) Copy() *IntSet {// return a copy of the set
 	var i IntSet
 	i.words = make([]uint64, len(s.words))
 	copy(i.words, s.words)
 	return &i
+}
+
+// AddAll is a variadic inputs to Add many values at a time	
+func (s *IntSet) AddAll(nums ...int) { 
+    for _, num := range nums {
+		s.Add(num)
+    }
+}
+
+// IntersectWith sets s to the intersection of s and t.
+func (s *IntSet) IntersectWith(t *IntSet) {
+	var minSetLength int
+	sWordLen, tWordLen := len(s.words), len(t.words)
+	if sWordLen > tWordLen{
+		minSetLength = tWordLen
+	} else {
+		minSetLength = sWordLen
+	}
+	for i := 0; i < sWordLen; i++ {
+		if i < minSetLength {
+			s.words[i] &= t.words[i]
+		} else {
+			s.words[i] = 0
+		}
+	}
+}
+
+// DifferenceWith sets s to the difference of s and t.
+func (s *IntSet) DifferenceWith(t *IntSet) {
+	// s  t  d
+	// 0  0  0
+	// 0  1  0
+	// 1  0  1
+	// 1  1  0
+
+	var minSetLength int
+	if sWordLen, tWordLen := len(s.words), len(t.words); sWordLen > tWordLen{
+		minSetLength = tWordLen
+	} else {
+		minSetLength = sWordLen
+	}
+	for i := 0; i < minSetLength; i++ {
+		s.words[i] &= (^t.words[i])
+	}
+}
+
+// Elems returns the a slice with set elements of the form "[1 2 3]".
+func (s *IntSet) Elems() *[]int {
+	var set []int
+	for i, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < 64; j++ {
+			if word&(1<<uint(j)) != 0 {
+				set = append(set, 64*i + j)
+			}
+		}
+	}
+	return &set
 }

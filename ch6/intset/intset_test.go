@@ -8,27 +8,41 @@ import "fmt"
 func Example_one() {
 	//!+main
 	var x, y IntSet
-	x.Add(1)
+	x.AddAll(1,0,98,56,23)
 	x.Add(144)
 	x.Add(9)
-	fmt.Println(x.String()) // "{1 9 144}"
+	fmt.Println(x.String()) // "{0 1 9 23 56 98 144}"
 
-	y.Add(9)
+	y.AddAll(9, 15, 54, 0)
 	y.Add(42)
-	fmt.Println(y.String()) // "{9 42}"
+	fmt.Println(y.String()) // "{0 9 15 42 54}"
+
+	x.IntersectWith(&y)
+	fmt.Println(x.String()) // "{0 9}"
+
+	x.AddAll(1,0,98,56,23)
+	fmt.Println(x.String()) // "{0 1 9 23 56 98}"
 
 	x.UnionWith(&y)
-	fmt.Println(x.String()) // "{1 9 42 144}"
+	fmt.Println(x.String()) // "{0 1 9 15 23 42 54 56 98}"
 
-	fmt.Println(x.Has(9), x.Has(123)) // "true false"
+	x.DifferenceWith(&y)
+	fmt.Println(x.String()) // "{1 23 56 98}"
+	fmt.Println(*x.Elems()) // "[1 23 56 98]"
+	
+	fmt.Println(x.Has(23), x.Has(123)) // "true false"
 	//!-main
 
 	// Output:
-	// {1 9 144}
-	// {9 42}
-	// {1 9 42 144}
+	// {0 1 9 23 56 98 144}
+	// {0 9 15 42 54}
+	// {0 9}
+	// {0 1 9 23 56 98}
+	// {0 1 9 15 23 42 54 56 98}
+	// {1 23 56 98}
+	// [1 23 56 98]
 	// true false
-}
+}// 
 
 func Example_two() {
 	var x IntSet
@@ -38,30 +52,28 @@ func Example_two() {
 	x.Add(42)
 	x.Add(37)
 	x.Add(128)
-	//x.Remove(37)
-
+	x.AddAll(25, 76, 90)
+	
 	//!+note
 	fmt.Println(&x)         // "{1 9 42 144}"
 	fmt.Println(x.String()) // "{1 9 42 144}"
 	fmt.Println(x)          // "{[4398046511618 0 65536]}"
 	//!-note
-	fmt.Println(x.Len())
+	fmt.Println(x.Len())	// "9"
 	x.Remove(42)
-	fmt.Println(&x)
-	//fmt.Printf("%p\n", &x)
+	fmt.Println(&x)			// "{1 9 25 37 76 90 128 144}"
 	
-	//var y IntSet
 	y := x.Copy()
-	fmt.Println(y)
+	fmt.Println(y)			// "{1 9 25 37 76 90 128 144}"
 
 	x.Clear()
-	fmt.Println(&x)
+	fmt.Println(&x)			// "{}"
 	// Output:
-	// {1 9 37 42 128 144}
-	// {1 9 37 42 128 144}
-	// {[4535485465090 0 65537]}
-	// 6
-	// {1 9 37 128 144}
-	// {1 9 37 128 144}
+	// {1 9 25 37 42 76 90 128 144}
+	// {1 9 25 37 42 76 90 128 144}
+	// {[4535519019522 67112960 65537]}
+	// 9
+	// {1 9 25 37 76 90 128 144}
+	// {1 9 25 37 76 90 128 144}
 	// {}
 }
