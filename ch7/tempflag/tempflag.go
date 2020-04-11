@@ -14,11 +14,15 @@ import (
 )
 
 //!+
-var temp = tempconv.CelsiusFlag("temp", 20.0, "the temperature")
+var c = tempconv.CelsiusFlag("c", 20.0, "the temperature")
+var f = tempconv.FahrenheitFlag("f", 20.0, "the temperature")
+var k = tempconv.KelvinFlag("k", 20.0, "the temperature")
 
 func main() {
 	flag.Parse()
-	fmt.Println(*temp)
+	fmt.Println(*c)
+	fmt.Println(*f)
+	fmt.Println(*k)
 }
 
 //!-
